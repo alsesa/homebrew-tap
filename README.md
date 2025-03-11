@@ -1,4 +1,4 @@
-# Lostecho Local
+# alsesa local software homebrew tap
 
 ## How do I install these formulae?
 
