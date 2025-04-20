@@ -1,10 +1,10 @@
 
 cask 'ulanzi-deck' do
-  version '1.7.0'
-  sha256 '12ba697970f4696954c800dea28a5ab6bccbd8b88eb4cdf453bf72ef18cce8b5'
+  version '1.7.2'
+  sha256 'e69298782e8a45e335110021dfb6761437de1f95c375631db6e7ff2eb07c9f71'
 
   # 应用程序的下载 URL
-  url 'https://cdn.ulanzistudio.com/UlanziDeck/1.7.0/Mac_Apple_UlanziDeck_V1.7.0_20250208.dmg'
+  url 'https://cdn.ulanzistudio.com/UlanziDeck/1.7.2/Mac_Apple_UlanziDeck_V1.7.2_20250416.dmg'
 
   # 应用程序的名称
   name 'UlanziDeck'
