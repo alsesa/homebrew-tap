@@ -17,7 +17,62 @@ class SenseVoice < Formula
       system "make", "-j#{ENV.make_jobs}"
     end
 
-    bin.install "build/bin/sense-voice-main" => "sense-voice"
+    # 安装真正的可执行文件
+    bin.install "build/bin/sense-voice-main" => "sense-voice-real"
+
+    # 安装wrapper
+    (bin/"sense-voice").write <<~EOS
+      #!/bin/bash
+      set -e
+
+      if [[ $# -lt 1 ]]; then
+        echo "Usage: sense-voice [audio_file] [other_options]"
+        exit 1
+      fi
+
+      INPUT="$1"
+      shift
+
+      if [[ ! -f "$INPUT" ]]; then
+        echo "Error: File '$INPUT' not found."
+        exit 1
+      fi
+
+      EXT="${INPUT##*.}"
+      TMPFILE=""
+
+      if [[ "$EXT" == "wav" ]]; then
+        # 检查采样率和声道数
+        SAMPLE_RATE=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of csv=p=0 "$INPUT")
+        CHANNELS=$(ffprobe -v error -select_streams a:0 -show_entries stream=channels -of csv=p=0 "$INPUT")
+
+        if [[ "$SAMPLE_RATE" == "16000" && "$CHANNELS" == "1" ]]; then
+          # 完美符合
+          WAV_INPUT="$INPUT"
+        else
+          echo "Converting WAV: Resample to 16kHz Mono..."
+          TMPFILE=$(mktemp /tmp/audioXXXXXX.wav)
+          ffmpeg -y -i "$INPUT" -ar 16000 -ac 1 -c:a pcm_s16le "$TMPFILE"
+          WAV_INPUT="$TMPFILE"
+        fi
+      else
+        # 非WAV直接转
+        echo "Converting $INPUT to WAV using ffmpeg..."
+        TMPFILE=$(mktemp /tmp/audioXXXXXX.wav)
+        ffmpeg -y -i "$INPUT" -ar 16000 -ac 1 -c:a pcm_s16le "$TMPFILE"
+        WAV_INPUT="$TMPFILE"
+      fi
+
+      #{bin}/sense-voice-real "$WAV_INPUT" "$@"
+
+      if [[ -n "$TMPFILE" && -f "$TMPFILE" ]]; then
+        rm -f "$TMPFILE"
+      fi
+    EOS
+
+    chmod 0755, bin/"sense-voice"
+
+    # 安装lib动态库，保证运行时找到
     lib.install Dir["build/lib/*.dylib"]
 
     # 修复 sense-voice 中对 dylib 的引用
