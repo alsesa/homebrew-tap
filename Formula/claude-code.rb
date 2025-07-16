@@ -17,13 +17,11 @@ class ClaudeCode < Formula
   def install
     # Install the package globally within the Homebrew prefix
     system "npm", "install", "-g", "--prefix", prefix, "@anthropic-ai/claude-code@#{version}"
-    # Add header padding to fix dylib linkage issue
-  inreplace "lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-darwin/ripgrep.node" do |s|
-    s.gsub! "/Users/dancol/code/claude-cli-queue/vendor/ripgrep-src/target/x86_64-apple-darwin/release/deps/libripgrep.dylib",
-            "#{lib}/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-darwin/libripgrep.dylib"
-  end
-  MachO::Tools.header_pad("#{lib}/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-darwin/ripgrep.node")
-
+    # 为 ripgrep.node 文件的头部增加填充(padding)。
+    # 这会给 Homebrew 自动修复链接时预留出足够的空间。
+    # 我们使用 prefix 变量来确保我们操作的是安装目录中的文件。
+    MachO::Tools.header_pad(prefix/"lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-darwin/ripgrep.node")
+  
   end
 
   test do
