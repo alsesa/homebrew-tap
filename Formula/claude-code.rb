@@ -4,7 +4,7 @@ class ClaudeCode < Formula
   desc "Command line interface for Claude AI by Anthropic"
   homepage "https://www.anthropic.com"
   url "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-1.0.53.tgz"
-  sha256 "ddf92e983a7bad6875d6436deabc32bfbbdfa75b43655c10777ae9d2a9d9a9da"
+  sha256 "3f9703dce3c86e0030be1e48c26d211547936be9c347f72efe1835c7a065100c"
   license "MIT"
 
   livecheck do
@@ -17,6 +17,13 @@ class ClaudeCode < Formula
   def install
     # Install the package globally within the Homebrew prefix
     system "npm", "install", "-g", "--prefix", prefix, "@anthropic-ai/claude-code@#{version}"
+    # Add header padding to fix dylib linkage issue
+  inreplace "lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-darwin/ripgrep.node" do |s|
+    s.gsub! "/Users/dancol/code/claude-cli-queue/vendor/ripgrep-src/target/x86_64-apple-darwin/release/deps/libripgrep.dylib",
+            "#{lib}/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-darwin/libripgrep.dylib"
+  end
+  MachO::Tools.header_pad("#{lib}/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-darwin/ripgrep.node")
+
   end
 
   test do
