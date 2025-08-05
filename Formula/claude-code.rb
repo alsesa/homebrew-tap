@@ -7,7 +7,7 @@ class ClaudeCode < Formula
   desc "Command line interface for Claude AI by Anthropic"
   homepage "https://www.anthropic.com"
   url "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-#{@version}.tgz"
-  sha356 "ca5613df880dc98ec99d76d84a1fc36c4076c5bd80e7bcd12d11801fd3c9f547"
+  sha256 "ca5613df880dc98ec99d76d84a1fc36c4076c5bd80e7bcd12d11801fd3c9f547"
   license "MIT"
 
   livecheck do
