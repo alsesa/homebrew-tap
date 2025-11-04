@@ -1,9 +1,9 @@
 cask 'ima-copilot' do
-  version '1.9.3'
-  sha256 '1169ae8407087ceb242e9972e7616627cf80bfbf28eb9acad4156513cd997191'
+  version '2.0.1'
+  sha256 'bbcd99ebc805e5a05a8d707feb9080224c7b61b6f78afee2cf6b66e62e06a6c1'
 
   # 应用程序的下载 URL
-  url 'https://ima-app.image.myqcloud.com/mac_channel/ima.copilot_universal_10000074_1.9.3_2980.dmg'
+  url 'https://ima-app.image.myqcloud.com/mac_channel/ima.copilot_universal_10000074_2.0.1_3375.dmg'
 
   # 应用程序的名称
   name 'ima.copilot'
