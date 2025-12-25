@@ -25,9 +25,9 @@ class SenseVoice < Formula
       #!/bin/bash
       set -e
 
-      if [[ $# -lt 1 ]]; then
-        echo "Usage: sense-voice [audio_file] [other_options]"
-        exit 1
+      # 如果没有参数，或第一个参数是选项（以-开头），直接传给原程序
+      if [[ $# -eq 0 ]] || [[ "$1" == -* ]]; then
+        exec #{bin}/sense-voice-real "$@"
       fi
 
       INPUT="$1"
@@ -75,10 +75,10 @@ class SenseVoice < Formula
     # 安装lib动态库，保证运行时找到
     lib.install Dir["build/lib/*.dylib"]
 
-    # 修复 sense-voice 中对 dylib 的引用
+    # 修复 sense-voice-real (实际二进制文件) 中对 dylib 的引用
     dylibs = Dir["#{lib}/*.dylib"]
     dylibs.each do |dylib|
-      system "install_name_tool", "-change", "@rpath/#{File.basename(dylib)}", "@loader_path/../lib/#{File.basename(dylib)}", "#{bin}/sense-voice"
+      system "install_name_tool", "-change", "@rpath/#{File.basename(dylib)}", "@loader_path/../lib/#{File.basename(dylib)}", "#{bin}/sense-voice-real"
     end
 
     # 修复各个 dylib 之间的引用
@@ -89,8 +89,8 @@ class SenseVoice < Formula
       end
     end
 
-    # 给 sense-voice 增加 rpath
-    system "install_name_tool", "-add_rpath", "@loader_path/../lib", "#{bin}/sense-voice"
+    # 给 sense-voice-real (实际二进制文件) 增加 rpath
+    system "install_name_tool", "-add_rpath", "@loader_path/../lib", "#{bin}/sense-voice-real"
   end
 
   test do
